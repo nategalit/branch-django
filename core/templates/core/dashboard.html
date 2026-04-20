@@ -1,0 +1,71 @@
+{% extends "core/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-1">Community Impact Dashboard</h2>
+<p class="text-muted mb-4">Connecting volunteers with community resources across Spokane.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <h2>{{ total_volunteers }}</h2>
+            <p>Active Volunteers</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <h2>{{ total_members }}</h2>
+            <p>Community Members</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <h2>{{ total_hours }}</h2>
+            <p>Hours Volunteered</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <h2>{{ active_locations }}</h2>
+            <p>Active Locations</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Recent Activity</h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>User</th>
+                    <th>Account</th>
+                    <th>Action</th>
+                    <th>Location</th>
+                    <th>Hours</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visit in recent_visits %}
+                <tr>
+                    <td>{{ visit.profile }}</td>
+                    <td>{{ visit.profile.account_type }}</td>
+                    <td>{{ visit.visit_type }}</td>
+                    <td>{{ visit.location }}</td>
+                    <td>{{ visit.hours_logged|default:"-" }}</td>
+                    <td>{{ visit.visit_date|date:"Y-m-d g:i A" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3">No activity logged yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

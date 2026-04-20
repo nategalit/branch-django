@@ -19,3 +19,23 @@ def dashboard(request):
         'active_locations': active_locations,
         'recent_visits': recent_visits,
     })
+
+def resource_finder(request):
+    locations = Location.objects.filter(is_active=True)
+    selected_service = request.GET.get('service', 'Show All')
+    search_term = request.GET.get('q', '')
+
+    if selected_service and selected_service != 'Show All':
+        locations = locations.filter(primary_service=selected_service)
+    if search_term:
+        locations = locations.filter(name__icontains=search_term)
+
+    services = Location.objects.filter(is_active=True).values_list(
+        'primary_service', flat=True).distinct()
+
+    return render(request, 'core/resource_finder.html', {
+        'locations': locations.order_by('name'),
+        'services': services,
+        'selected_service': selected_service,
+        'search_term': search_term,
+    })

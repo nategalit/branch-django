@@ -39,7 +39,10 @@
                         <span class="nav-link text-white">👋 {{ user.username }}</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/accounts/logout/">Logout</a>
+                        <form method="POST" action="/accounts/logout/" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn btn-link p-0 text-white text-decoration-none border-0 bg-transparent">Logout</button>
+                        </form>
                     </li>
                 {% else %}
                     <li class="nav-item">

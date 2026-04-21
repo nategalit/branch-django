@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.db.models import Sum
 from .models import Profile, Location, Visit
-
+from .forms import VisitForm, SignupForm
 
 def dashboard(request):
     total_volunteers = Profile.objects.filter(account_type='Volunteer').count()
@@ -39,3 +42,50 @@ def resource_finder(request):
         'selected_service': selected_service,
         'search_term': search_term,
     })
+
+def log_activity(request):
+    if request.method == 'POST':
+        form = VisitForm(request.POST)
+        if form.is_valid():
+            visit = form.save()
+            if visit.visit_type == 'Volunteered':
+                points = int(visit.hours_logged * 100)
+                visit.profile.total_points += points
+                visit.profile.save()
+                messages.success(request,
+                    f"🎉 Logged {visit.hours_logged} hours and earned {points} points!")
+            else:
+                messages.success(request,
+                    "✅ Check-in successful. We're glad we could help today!")
+            return redirect('log_activity')
+    else:
+        form = VisitForm()
+
+    return render(request, 'core/log_activity.html', {'form': form})
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            # Create the Django auth User
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password1'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+            )
+            # Create the linked Profile
+            Profile.objects.create(
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+                account_type=form.cleaned_data['account_type'],
+            )
+            # Log them in automatically
+            login(request, user)
+            messages.success(request, f"Welcome to Branch, {user.first_name}! 🌿")
+            return redirect('dashboard')
+    else:
+        form = SignupForm()
+    return render(request, 'core/signup.html', {'form': form})

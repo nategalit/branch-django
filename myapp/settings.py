@@ -130,3 +130,5 @@ LOGIN_URL = '/accounts/login/'
 
 # Static files for production
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+CSRF_TRUSTED_ORIGINS = ['https://branch-django.up.railway.app']

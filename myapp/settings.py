@@ -26,8 +26,7 @@ SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', 'galinat22.pythonanywhere.com']
 
 # Application definition
 
@@ -128,3 +127,6 @@ STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
+
+# Static files for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
